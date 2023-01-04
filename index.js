@@ -49,9 +49,12 @@ app.get('/', (req, res) => {
 })
 // show article by this slug
 app.get('/article/:slug', (req, res) => {
-    let query = `SELECT *
-                 FROm article
-                 WHERE slug = "${req.params.slug}"`
+    let query = `select a.*,
+                        au.name as author
+                 from article a,
+                      author au
+                 where slug = "${req.params.slug}"
+                   and a.author_id = au.id`
     let article
     con.query(query, (err, result) => {
         if (err) throw err
