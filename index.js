@@ -1,6 +1,8 @@
 // Application packages
 const express = require('express')
 const app = express()
+// import stringToUrl
+
 
 const path = require('path')
 // add template engine
@@ -50,7 +52,8 @@ app.get('/', (req, res) => {
 // show article by this slug
 app.get('/article/:slug', (req, res) => {
     let query = `select a.*,
-                        au.name as author
+                        au.name as author,
+                        au.id   as author_id
                  from article a,
                       author au
                  where slug = "${req.params.slug}"
@@ -61,6 +64,31 @@ app.get('/article/:slug', (req, res) => {
         article = result
         res.render('article', {
             article: article
+        })
+    })
+})
+// show articles grouped by author
+
+app.get('/author/:author_id', (req, res) => {
+    let query = `select *
+                 from article
+                 where author_id = "${req.params.author_id}"`
+    let articles
+    let author
+    con.query(query, (err, result) => {
+        if (err) throw err
+        articles = result
+        query = `Select *
+                 from author
+                 where id = "${req.params.author_id}"`
+        con.query(query, (err, result) => {
+            if (err) throw err
+            author = result
+            console.log(author)
+            res.render('author', {
+                author: author,
+                articles: articles
+            })
         })
     })
 })
