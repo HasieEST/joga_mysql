@@ -1,16 +1,20 @@
+const Article = require('../models/article.model')
 const con = require('../utils/db')
 
 
 // show all articles - index page
 const getAllArticles = (req, res) => {
-    let query = "SELECT * FROM article";
-    let articles = []
-    con.query(query, (err, result) => {
-        if (err) throw err;
-        articles = result
-        res.render('index', {
-            articles: articles
-        })
+    Article.getAll((err,data)=>{
+        if(err){
+            res.status(500).send({
+                message: err.message || 'Some error ocurred retrieving articles data'
+            })
+        } else {
+            console.log(data)
+            res.render('index', {
+                article: data
+            })
+        }
     })
 }
 // show article by this slug
