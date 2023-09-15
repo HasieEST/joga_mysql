@@ -36,7 +36,7 @@ Article.getBySlug = (slug, result) => {
                    and a.author_id = au.id`
     let article
     con.query(query, (err, res) => {
-        if(err) {
+        if (err) {
             console.log('error: ', err)
             result(err, null)
             return
@@ -48,8 +48,27 @@ Article.getBySlug = (slug, result) => {
     })
 }
 
+Article.createNew = (newArticle, result) => {
+    let query = `insert into article set 
+                    name = "${newArticle.name}",
+                    slug = "${newArticle.slug}",
+                    image = "${newArticle.image}",
+                    body = "${newArticle.body}",
+                    published = "${newArticle.published}",
+                    author_id = "${newArticle.author_id}"`
 
-
+    con.query(query, (err, res) => {
+        if(err){
+            console.log('error: ', err)
+            result(err, null)
+            return
+        }
+        console.log('created article: ', {
+            id: res.insertID, ... newArticle
+        })
+        result(null, {id: res.insertID, ...newArticle})
+    })
+}
 
 
 module.exports = Article
