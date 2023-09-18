@@ -1,6 +1,6 @@
 const con = require('../utils/db')
 
-const Article = (article) => {
+function Article(article) {
     this.name = article.name
     this.slug = article.slug
     this.image = article.image
@@ -34,7 +34,6 @@ Article.getBySlug = (slug, result) => {
                       author au
                  where slug = "${slug}"
                    and a.author_id = au.id`
-    let article
     con.query(query, (err, res) => {
         if (err) {
             console.log('error: ', err)
@@ -58,17 +57,61 @@ Article.createNew = (newArticle, result) => {
                     author_id = "${newArticle.author_id}"`
 
     con.query(query, (err, res) => {
-        if(err){
+        if (err) {
             console.log('error: ', err)
             result(err, null)
             return
         }
-        console.log('created article: ', {
-            id: res.insertID, ... newArticle
-        })
-        result(null, {id: res.insertID, ...newArticle})
+        result(null, 'Succesfully created article!')
+        return
     })
 }
 
+
+Article.getByID = (id, result) => {
+    let query = `select * from article where article.id = "${id}"`
+    con.query(query, (err, res) => {
+        if (err) {
+            console.log('error: ', err)
+            result(err, null)
+            return
+        }
+        if (res.length) {
+            console.log('found article: ', res[0]);
+            result(null, res[0])
+        }
+    })
+}
+
+Article.updateByID = (id, updatedArticle, result) => {
+    let query = `update article
+                 set name = "${updatedArticle.name}",
+                 slug = "${updatedArticle.slug}",
+                 image = "${updatedArticle.image}",
+                 body = "${updatedArticle.body}",
+                 published = "${updatedArticle.published}"
+                 where article.id = "${id}"`
+    con.query(query, (err) => {
+        if (err) {
+            console.log('error: ', err)
+            result(err, null)
+            return
+        }
+        result(null, 'Succesful update!')
+        return
+    })
+}
+Article.deleteByID = (id, result) => {
+    let query = `delete from article where article.id = "${id}" `
+    con.query(query, (err) => {
+        if (err) {
+            console.log('error: ', err)
+            result(err, null)
+            return
+        }
+        result(null, 'Succesful deletion!')
+        return
+    })
+}
 
 module.exports = Article

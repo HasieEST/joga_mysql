@@ -1,6 +1,8 @@
 // Application packages
 const express = require('express')
 const app = express()
+const multer = require('multer')
+const upload = multer()
 const path = require('path')
 // add template engine
 const hbs = require('express-handlebars')
@@ -19,6 +21,7 @@ app.use(express.static(path.join(__dirname, '/public')))
 
 const bodyParser = require('body-parser')
 app.use(bodyParser.urlencoded({extended: true}))
+app.use(upload.none())
 
 const articleRoutes = require('./routes/article')
 const authorRoutes = require('./routes/author')
